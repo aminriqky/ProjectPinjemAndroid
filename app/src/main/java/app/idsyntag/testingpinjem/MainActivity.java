@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     public void onRefresh() {
         mWebView.reload();
-        refreshLayout.setRefreshing(false);
+        new Handler().postDelayed(() -> refreshLayout.setRefreshing(false), 2000);
     }
 
     //method ini perlu ditambahkan agar saat halaman web diload tetap diload di aplikasi, tidak diload di webbrowseer
