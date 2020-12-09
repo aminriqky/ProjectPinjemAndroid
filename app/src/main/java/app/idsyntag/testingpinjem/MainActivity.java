@@ -1,5 +1,6 @@
 package app.idsyntag.testingpinjem;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -46,6 +47,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         setContentView(R.layout.activity_main);
 
         mWebView = (WebView) findViewById(R.id.web_view);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
 
         bar=(ProgressBar) findViewById(R.id.progress);
 
@@ -57,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
         mWebView.getSettings().setAllowFileAccess( true );
         mWebView.getSettings().setJavaScriptEnabled(true);
+        mWebView.getSettings().setDomStorageEnabled(true);
         mWebView.getSettings().setAppCacheEnabled( true );
         mWebView.getSettings().setAppCacheMaxSize( 8 * 1024 * 1024 );
         mWebView.getSettings().setAppCachePath(getApplicationContext().getCacheDir().getAbsolutePath());
@@ -83,6 +89,15 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
         refreshLayout.setOnRefreshListener(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!mWebView.getUrl().equals(URL)) {
+            mWebView.stopLoading();
+            mWebView.reload();
+        }
     }
 
     @Override
@@ -175,6 +190,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         super.onDestroy();
         mWebView.removeJavascriptInterface("xx");
         mWebView.getSettings().setJavaScriptEnabled(false);
+        mWebView.getSettings().setDomStorageEnabled(false);
+        mWebView.getSettings().setAppCacheEnabled(false);
+        mWebView.getSettings().setDatabaseEnabled(false);
+        mWebView.getSettings().setAllowFileAccess(false);
         mWebView.loadUrl("about:blank");
         mWebView.loadDataWithBaseURL(null, "", "text/html", "uft-8", null);
         ViewParent parent = mWebView.getParent();
